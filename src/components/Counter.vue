@@ -15,26 +15,18 @@ export default {
   data () {
     return {
       title: 'Counter',
+      counter: localStorage.getItem('counter') || 0,
       msg: this.message
-    }
-  },
-  computed: {
-    counter: {
-      get: function () {
-        return this.counter || localStorage.getItem('counter') || 0
-      },
-      set: function (v) {
-        this.counter = v
-        localStorage.setItem('counter', v)
-      }
     }
   },
   methods: {
     increment () {
       this.counter++
+      localStorage.setItem('counter', this.counter)
     },
     decrement () {
       this.counter--
+      localStorage.setItem('counter', this.counter)
     }
   }
 }

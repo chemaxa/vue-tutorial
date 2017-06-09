@@ -1,8 +1,13 @@
 <template>
   <div class="counter">
     <h2>{{title}}</h2>
-    <h2>{{msg}}</h2>
     <p> {{counter}}</p>
+    <h3>Profile</h3>
+    <ol>
+      <li v-for="(value, key) in profile">
+        {{key.toUpperCase()}} - {{ value }}
+      </li>
+    </ol>
     <button @click="increment">increment</button>
     <button @click="decrement">decrement</button>
   </div>
@@ -11,12 +16,26 @@
 <script>
 export default {
   name: 'counter',
-  props: ['message'],
+  props: ['message', 'auth'],
   data () {
+    if (this.auth.userProfile) {
+      this.$nextTick(() => {
+        this.profile = this.auth.userProfile
+      })
+    } else {
+      this.auth.getProfile((err, profile) => {
+        if (err) {
+          console.log('Error: ', err)
+        } else {
+          this.profile = profile
+        }
+      })
+    }
     return {
       title: 'Counter',
-      counter: localStorage.getItem('counter') || 0,
-      msg: this.message
+      counter: parseInt(localStorage.getItem('counter')) || 0,
+      msg: this.message,
+      profile: {}
     }
   },
   methods: {

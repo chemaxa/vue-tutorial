@@ -1,42 +1,37 @@
-import auth0 from 'auth0-js'
+import Auth0Lock from 'auth0-lock'
 import EventEmitter from 'event-emitter'
-import router from './../router'
+import Router from 'vue-router'
 
 export default class AuthService {
 
   authenticated = this.isAuthenticated()
   authNotifier = new EventEmitter()
+  userProfile;
+  router = new Router()
 
-  auth0 = new auth0.WebAuth({
-    domain: 'chemaxa.eu.auth0.com',
-    clientID: 'mvthbIGYJ55O1duscfl57TGoUAGfLAOX',
-    redirectUri: 'http://localhost:8080/callback',
-    audience: 'https://chemaxa.eu.auth0.com/userinfo',
-    responseType: 'token id_token',
-    scope: 'openid'
+  auth0 = new Auth0Lock('mvthbIGYJ55O1duscfl57TGoUAGfLAOX', 'chemaxa.eu.auth0.com', {
+    oidcConformant: true,
+    autoclose: true,
+    auth: {
+      audience: 'https://chemaxa.eu.auth0.com/userinfo',
+      responseType: 'token id_token',
+      params: {
+        scope: 'openid profile'
+      }
+    }
   })
 
   constructor () {
     this.login = this.login.bind(this)
     this.setSession = this.setSession.bind(this)
     this.logout = this.logout.bind(this)
+    this.getAccessToken = this.getAccessToken.bind(this)
+    this.getProfile = this.getProfile.bind(this)
     this.isAuthenticated = this.isAuthenticated.bind(this)
   }
 
   login () {
-    this.auth0.authorize()
-  }
-
-  handleAuthentication () {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult)
-        router.replace('home')
-      } else if (err) {
-        router.replace('home')
-        console.log(err)
-      }
-    })
+    this.auth0.show()
   }
 
   setSession (authResult) {
@@ -48,6 +43,7 @@ export default class AuthService {
     localStorage.setItem('id_token', authResult.idToken)
     localStorage.setItem('expires_at', expiresAt)
     this.authNotifier.emit('authChange', { authenticated: true })
+    this.router.push('')
   }
 
   logout () {
@@ -58,7 +54,27 @@ export default class AuthService {
     this.userProfile = null
     this.authNotifier.emit('authChange', false)
     // navigate to the home route
-    router.replace('home')
+    this.router.replace('')
+  }
+
+  getAccessToken () {
+    const accessToken = localStorage.getItem('access_token')
+    if (!accessToken) {
+      this.login()
+      // throw new Error('No access token found')
+    }
+    return accessToken
+  }
+
+  getProfile (cb) {
+    let accessToken = this.getAccessToken()
+    let self = this
+    this.auth0.getUserInfo(accessToken, (err, profile) => {
+      if (profile) {
+        self.userProfile = profile
+      }
+      cb(err, profile)
+    })
   }
 
   isAuthenticated () {

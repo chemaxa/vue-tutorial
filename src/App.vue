@@ -1,19 +1,25 @@
 <template>
   <div id="app">
     <p> 
-    <router-link :to="'/'">
-      Home
-    </router-link>
+      <router-link :to="'/'">
+        Home
+      </router-link>
+    </p> 
+    <p>  
+      <router-link :to="'profile'"
+        v-if="authenticated">
+          Profile
+      </router-link>
     </p> 
     <p>      
-    <button v-if="!authenticated" @click="login()">
-      Log In
-    </button>
+      <button v-if="!authenticated" @click="login()">
+        Log In
+      </button>
     </p>
     <p> 
-    <button v-if="authenticated" @click="logout()">
-      Log Out
-    </button>
+      <button v-if="authenticated" @click="logout()">
+        Log Out
+      </button>
     </p> 
     <router-view :auth="auth" :authenticated="authenticated">
     </router-view>

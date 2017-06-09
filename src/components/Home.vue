@@ -2,12 +2,11 @@
 <template>
   <div class="home">
     <h1>{{ title }}</h1>
-    <counter :message=msg></counter>
+    <p>Loginned: {{msg}}</p>
   </div>
 </template>
 
 <script>
-import counter from './Counter.vue'
 export default {
   name: 'Home',
   props: ['auth'],
@@ -16,9 +15,6 @@ export default {
       title: 'Home',
       msg: this.auth.isAuthenticated()
     }
-  },
-  components: {
-    counter
   }
 }
 </script>

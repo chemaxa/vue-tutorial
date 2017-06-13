@@ -17,7 +17,6 @@ import counter from './Counter.vue'
 
 export default {
   props: ['auth'],
-  
   data () {
     if (this.auth.userProfile) {
       this.$nextTick(() => {

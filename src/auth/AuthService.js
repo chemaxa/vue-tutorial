@@ -76,7 +76,7 @@ export default class AuthService {
   getProfile (cb) {
     let accessToken = this.getAccessToken()
     let self = this
-    this.auth0.getUserInfo(accessToken, (err, profile) => {
+    this.auth0.client.userInfo(accessToken, (err, profile) => {
       if (profile) {
         self.userProfile = profile
       }

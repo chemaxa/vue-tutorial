@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import AuthService from './auth/AuthService.js'
+import AuthService from './service/Auth.js'
 const auth = new AuthService()
 const { login, logout, authenticated, authNotifier } = auth
 export default {

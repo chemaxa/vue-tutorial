@@ -7,6 +7,7 @@
         <label><i class="glyphicon glyphicon-user"></i> Nickname</label>
         <h3 class="nickname">{{ profile.nickname }}</h3>
       </div>
+      <p>{{profile}}</p>
     </div>
     <counter :auth=auth></counter>
   </div>

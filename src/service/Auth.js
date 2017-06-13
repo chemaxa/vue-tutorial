@@ -1,6 +1,7 @@
 import Auth0 from 'auth0-js'
 import EventEmitter from 'event-emitter'
 import router from '../router'
+import {AUTH_CONFIG} from './credentials'
 
 export default class AuthService {
   authenticated = this.isAuthenticated()
@@ -8,10 +9,10 @@ export default class AuthService {
   userProfile;
 
   auth0 = new Auth0.WebAuth({
-    domain: 'chemaxa.eu.auth0.com',
-    clientID: 'mvthbIGYJ55O1duscfl57TGoUAGfLAOX',
-    redirectUri: 'http://localhost:8080/callback',
-    audience: 'https://chemaxa.eu.auth0.com/userinfo',
+    domain: AUTH_CONFIG.domain,
+    clientID: AUTH_CONFIG.clientId,
+    redirectUri: AUTH_CONFIG.callbackUrl,
+    audience: `https://${AUTH_CONFIG.domain}/userinfo`,
     responseType: 'token id_token',
     leeway: 30,
     scope: 'openid profile'

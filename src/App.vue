@@ -30,6 +30,7 @@
 import AuthService from './auth/AuthService.js'
 const auth = new AuthService()
 const { login, logout, authenticated, authNotifier } = auth
+console.log(auth.isAuthenticated())
 export default {
   name: 'app',
   data () {

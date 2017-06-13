@@ -1,24 +1,19 @@
-import Auth0Lock from 'auth0-lock'
+import Auth0 from 'auth0-js'
 import EventEmitter from 'event-emitter'
-import Router from 'vue-router'
+import router from '../router'
 
 export default class AuthService {
-
   authenticated = this.isAuthenticated()
   authNotifier = new EventEmitter()
   userProfile;
-  router = new Router()
 
-  auth0 = new Auth0Lock('mvthbIGYJ55O1duscfl57TGoUAGfLAOX', 'chemaxa.eu.auth0.com', {
-    oidcConformant: true,
-    autoclose: true,
-    auth: {
-      audience: 'https://chemaxa.eu.auth0.com/userinfo',
-      responseType: 'token id_token',
-      params: {
-        scope: 'openid profile'
-      }
-    }
+  auth0 = new Auth0.WebAuth({
+    domain: 'chemaxa.eu.auth0.com',
+    clientID: 'mvthbIGYJ55O1duscfl57TGoUAGfLAOX',
+    redirectUri: 'http://localhost:8080/callback',
+    audience: 'https://chemaxa.eu.auth0.com/userinfo',
+    responseType: 'token id_token',
+    scope: 'openid profile'
   })
 
   constructor () {
@@ -31,7 +26,7 @@ export default class AuthService {
   }
 
   login () {
-    this.auth0.show()
+    this.auth0.authorize()
   }
 
   setSession (authResult) {
@@ -43,7 +38,19 @@ export default class AuthService {
     localStorage.setItem('id_token', authResult.idToken)
     localStorage.setItem('expires_at', expiresAt)
     this.authNotifier.emit('authChange', { authenticated: true })
-    this.router.push('')
+    router.push('')
+  }
+
+  handleAuthentication () {
+    this.auth0.parseHash((err, authResult) => {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        this.setSession(authResult)
+        router.replace('home')
+      } else if (err) {
+        router.replace('home')
+        console.log(err)
+      }
+    })
   }
 
   logout () {
@@ -54,7 +61,7 @@ export default class AuthService {
     this.userProfile = null
     this.authNotifier.emit('authChange', false)
     // navigate to the home route
-    this.router.replace('')
+    router.replace('')
   }
 
   getAccessToken () {

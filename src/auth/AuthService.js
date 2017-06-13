@@ -13,6 +13,7 @@ export default class AuthService {
     redirectUri: 'http://localhost:8080/callback',
     audience: 'https://chemaxa.eu.auth0.com/userinfo',
     responseType: 'token id_token',
+    leeway: 30,
     scope: 'openid profile'
   })
 
@@ -43,6 +44,7 @@ export default class AuthService {
 
   handleAuthentication () {
     this.auth0.parseHash((err, authResult) => {
+      console.log(authResult)
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult)
         router.replace('home')
@@ -61,7 +63,7 @@ export default class AuthService {
     this.userProfile = null
     this.authNotifier.emit('authChange', false)
     // navigate to the home route
-    router.replace('')
+    router.replace('home')
   }
 
   getAccessToken () {

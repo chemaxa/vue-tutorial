@@ -36,6 +36,7 @@ export default class AuthService {
     let expiresAt = JSON.stringify(
       authResult.expiresIn * 1000 + new Date().getTime()
     )
+    localStorage.setItem('sub', authResult.idTokenPayload.sub)
     localStorage.setItem('access_token', authResult.accessToken)
     localStorage.setItem('id_token', authResult.idToken)
     localStorage.setItem('expires_at', expiresAt)
@@ -61,6 +62,7 @@ export default class AuthService {
     localStorage.removeItem('access_token')
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
+    localStorage.removeItem('sub')
     this.userProfile = null
     this.authNotifier.emit('authChange', false)
     // navigate to the home route

@@ -13,9 +13,9 @@ export default class UserService {
   }
 
   getUserData (cb) {
-    const accessToken = localStorage.getItem('access_token')
+    const userId = localStorage.getItem('sub')
     let self = this
-    this.auth0Manage.getUser(accessToken, (err, data) => {
+    this.auth0Manage.getUser(userId, (err, data) => {
       if (data) {
         self.userData = data
       }
